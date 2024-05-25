@@ -9,7 +9,6 @@ namespace NintendoStockChecker
     internal class NintendoStockChecker(IOptions<Settings> settings,
         ILogger<NintendoStockChecker> logger) : BackgroundService
     {
-
         private readonly Settings _settings = settings.Value;
         private readonly ILogger<NintendoStockChecker> _logger = logger;
 
@@ -33,7 +32,7 @@ namespace NintendoStockChecker
 
                 try
                 {
-                    productStatus = await _client.GetFromJsonAsync<NintendoResponse>("https://graph.nintendo.com/?operationName=ProductsBySku&variables={\"locale\":\"en_US\",\"personalized\":false,\"skus\":[\"117806\"]}&extensions={\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"38a6ad9c4e61fc840abcaf65021262b6122c52040051acb97f07846d2cd7099c\"}}", cancellationToken);
+                    productStatus = await _client.GetFromJsonAsync<NintendoResponse>("https://graph.nintendo.com/?operationName=ProductsBySku&variables={\"locale\":\"en_US\",\"personalized\":false,\"skus\":[\"117806\",\"117803\",\"112617\"]}&extensions={\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"38a6ad9c4e61fc840abcaf65021262b6122c52040051acb97f07846d2cd7099c\"}}", cancellationToken);
                 }
                 catch
                 {
@@ -41,16 +40,17 @@ namespace NintendoStockChecker
 
                 if (productStatus != null && productStatus.Data.Products.Count != 0)
                 {
-                    var product = productStatus.Data.Products.First();
-
-                    _logger.LogDebug("Found product: {product.Name}", product.Name);
-
-                    if (product.IsSalableQty)
+                    foreach (var product in productStatus.Data.Products)
                     {
-                        await PushNotification($"{product.Name} is now available!", cancellationToken);
-                    }
+                        _logger.LogDebug("Found product: {product.Name}", product.Name);
 
-                    _logger.LogInformation("{product.Name} is not yet in stock.", product.Name);
+                        if (product.IsSalableQty)
+                        {
+                            await PushNotification($"{product.Name} is now available!", cancellationToken);
+                        }
+
+                        _logger.LogDebug("{product.Name} is not yet in stock.", product.Name);
+                    }
                 }
 
                 await Task.Delay(_settings.PollRateInSeconds * 1000, cancellationToken);
