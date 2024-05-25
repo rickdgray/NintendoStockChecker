@@ -49,6 +49,8 @@ namespace NintendoStockChecker
                     {
                         await PushNotification($"{product.Name} is now available!", cancellationToken);
                     }
+
+                    _logger.LogInformation("{product.Name} is not yet in stock.", product.Name);
                 }
 
                 await Task.Delay(_settings.PollRateInSeconds * 1000, cancellationToken);
