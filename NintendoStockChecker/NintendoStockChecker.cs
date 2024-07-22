@@ -32,7 +32,7 @@ namespace NintendoStockChecker
 
                 try
                 {
-                    productStatus = await _client.GetFromJsonAsync<NintendoResponse>("https://graph.nintendo.com/?operationName=ProductsBySku&variables={\"locale\":\"en_US\",\"personalized\":false,\"skus\":[\"117806\",\"117803\",\"112617\"]}&extensions={\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"38a6ad9c4e61fc840abcaf65021262b6122c52040051acb97f07846d2cd7099c\"}}", cancellationToken);
+                    productStatus = await _client.GetFromJsonAsync<NintendoResponse>("https://graph.nintendo.com/?operationName=ProductsBySku&variables={\"locale\":\"en_US\",\"personalized\":false,\"skus\":[\"117806\",\"117803\"]}&extensions={\"persistedQuery\":{\"version\":1,\"sha256Hash\":\"38a6ad9c4e61fc840abcaf65021262b6122c52040051acb97f07846d2cd7099c\"}}", cancellationToken);
                 }
                 catch
                 {
